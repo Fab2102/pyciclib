@@ -1,177 +1,159 @@
+import math
 import pandas as pd
-from typing import Optional, List, Dict
-from .utils import FREQ_MAP, LABEL_MAP, validate_filename
-
+from typing import Optional, Optional, Literal
+from .utils import FREQ_MAP, LABEL_MAP
 
 
 class CompoundInterest:
-    """
-    A flexible and high-precision compound interest calculator.
-
-    This class models the growth of an investment over time with customizable
-    compounding frequency, contribution schedule, tax treatment, and inflation adjustment.
-    It also supports exporting detailed breakdowns to CSV or Excel.
-
-    Parameters:
-        init_value (float): 
-            Initial investment amount. (Required)
-        
-        rate (float): 
-            Annual interest rate as a decimal (e.g., 0.05 for 5%). (Required)
-        
-        years (float): 
-            Investment duration in years. (Required)
-        
-        compounding (str): 
-            Compounding frequency. Must be one of: 
-            'annually', 'semiannually', 'quarterly', 'monthly',
-            'biweekly', 'weekly', or 'daily'. (Required)
-
-        contributions (float, optional): 
-            Amount contributed at each interval. Defaults to 0.0.
-
-        contribution_frequency (str, optional): 
-            Frequency of contributions. Defaults to the compounding frequency.
-
-        contribution_timing (str, optional): 
-            Whether contributions are made at the 'start' or 'end' of each period. Defaults to 'end'.
-
-        apply_tax (bool, optional): 
-            Whether to apply tax on interest. Defaults to False.
-
-        tax_rate (float, optional): 
-            Flat tax rate to apply on interest (if enabled). Defaults to 0.0.
-
-    Example:
-        >>> from pycic import CompoundInterest
-        >>> ci = CompoundInterest(
-        ...     init_value=1000,
-        ...     rate=0.05,
-        ...     years=10,
-        ...     contributions=100,
-        ...     compounding="monthly",
-        ...     apply_tax=True,
-        ...     tax_rate=0.25
-        ... )
-        >>> ci.future_value()
-        20045.12
-
-        >>> ci.export_breakdown_to_csv("output.csv")
-    """
-
     def __init__(
         self,
         init_value: float,
-        rate: float,
+        interest_rate: float,
         years: float,
-        contributions: float = 0.0,
-        compounding: str = "annually",
-        contribution_frequency: Optional[str] = None,
-        contribution_timing: str = "end",  # "start" or "end"
-        apply_tax: bool = False,
+        comp_freq: Literal[
+            "annually",
+            "semiannually",
+            "quarterly",
+            "monthly",
+            "biweekly",
+            "weekly",
+            "daily",
+        ],
+        contribution: float = 0.0,
+        contribution_freq: Optional[
+            Literal[
+                "annually",
+                "semiannually",
+                "quarterly",
+                "monthly",
+                "biweekly",
+                "weekly",
+                "daily",
+            ]
+        ] = None,
+        contribution_timing: Literal["start", "end"] = "end",
         tax_rate: float = 0.0,
     ) -> None:
-        
         """
         Initialize a CompoundInterest calculator.
 
         Required Parameters:
             init_value (float): Initial investment amount.
-            rate (float): Annual interest rate (e.g., 0.05 for 5%).
+            interest_rate (float): Interest rate per annum (p.a.), entered as a decimal (e.g.: 0.05 for 5% p.a.).
             years (float): Investment duration in years.
-            compounding (str): Frequency of interest compounding (e.g., 'monthly', 'annually').
+            comp_freq (str): Frequency of interest compounding.
+                Recommended options: 'annually', 'semiannually', 'quarterly',
+                'monthly', 'biweekly', 'weekly', 'daily'.
 
         Optional Parameters:
-            contributions (float): Amount contributed at each interval. Defaults to 0.0.
-            contribution_frequency (str): Frequency of contributions. Defaults to same as compounding.
-            contribution_timing (str): 'start' or 'end' of period. Defaults to 'end'.
-            apply_tax (bool): Whether to apply tax on interest. Defaults to False.
-            tax_rate (float): Tax rate applied to interest (if enabled). Defaults to 0.0.
+            contribution (float): Amount contributed at each interval. Defaults to 0.0.
+            contribution_freq (str): Frequency of contributions. Defaults to same as compounding.
+                Recommended options are the same as for comp_freq.
+            contribution_timing (str): When the contribution is made.
+                Recommended options: "start" or "end". Defaults to "end".
+            tax_rate (float): Tax rate applied to interest. Defaults to 0.0.
         """
 
         # Type and value checks
-        if not isinstance(init_value, (int, float)) or init_value < 0:
-            raise ValueError("init_value must be a non-negative number.")
-        if not isinstance(rate, (int, float)) or rate < 0:
-            raise ValueError("rate must be a non-negative number.")
-        if not isinstance(years, (int, float)) or years <= 0:
-            raise ValueError("years must be a positive number.")
-        if not isinstance(contributions, (int, float)) or contributions < 0:
-            raise ValueError("contributions must be a non-negative number.")
-        if not isinstance(tax_rate, (int, float)) or not 0 <= tax_rate <= 1:
-            raise ValueError("tax_rate must be between 0 and 1.")
-        if not isinstance(apply_tax, bool):
-            raise TypeError("apply_tax must be a boolean.")
-        if not isinstance(compounding, str):
-            raise TypeError("compounding must be a string.")
-        if not isinstance(contribution_frequency, (str, type(None))):
-            raise TypeError("contribution_frequency must be a string or None.")
+        if not isinstance(init_value, (int, float)):
+            raise TypeError("init_value must be a number")
+        if init_value < 0:
+            raise ValueError("init_value must be non-negative")
+
+        if not isinstance(interest_rate, (int, float)):
+            raise TypeError("interest_rate must be a number")
+        if interest_rate < 0 or interest_rate > 1:
+            raise ValueError("interest_rate must be between 0 and 1")
+
+        if not isinstance(years, (int, float)):
+            raise TypeError("years must be a number")
+        if years <= 0:
+            raise ValueError("years must be positive")
+        if years > 200:
+            raise ValueError("years must be 200 or less")
+
+        if not isinstance(contribution, (int, float)):
+            raise TypeError("contribution must be a number")
+        if contribution < 0:
+            raise ValueError("contribution must be non-negative")
+
+        if not isinstance(tax_rate, (int, float)):
+            raise TypeError("tax_rate must be a number")
+        if not 0 <= tax_rate <= 1:
+            raise ValueError("tax_rate must be between 0 and 1")
+
+        # String parameter validation
+        if comp_freq is None:
+            raise TypeError("comp_freq cannot be None")
+        if not isinstance(comp_freq, str):
+            raise TypeError("comp_freq must be a string")
+        comp_freq = comp_freq.strip().lower()
+        if comp_freq not in FREQ_MAP:
+            raise ValueError(f"Invalid compounding frequency: '{comp_freq}'")
+
+        if contribution_freq is not None and not isinstance(contribution_freq, str):
+            raise TypeError("contribution_freq must be a string or None")
+        contribution_freq = (contribution_freq or comp_freq).strip().lower()
+        if contribution_freq not in FREQ_MAP:
+            raise ValueError(f"Invalid contribution frequency: '{contribution_freq}'")
+
+        if contribution_timing is None:
+            raise TypeError("contribution_timing cannot be None")
         if not isinstance(contribution_timing, str):
-            raise TypeError("contribution_timing must be a string.")
+            raise TypeError("contribution_timing must be a string")
+        contribution_timing = contribution_timing.strip().lower()
+        if contribution_timing not in {"start", "end"}:
+            raise ValueError("contribution_timing must be either 'start' or 'end'")
 
         # Normalize string inputs
-        compounding = compounding.strip().lower()
-        contribution_frequency = (contribution_frequency or compounding).strip().lower()
+        comp_freq = comp_freq.strip().lower()
+        contribution_freq = (contribution_freq or comp_freq).strip().lower()
         contribution_timing = contribution_timing.strip().lower()
 
-        if contribution_timing not in {"start", "end"}:
-            raise ValueError("contribution_timing must be either 'start' or 'end'.")
-        if compounding not in FREQ_MAP:
-            raise ValueError(f"Invalid compounding frequency: '{compounding}'")
-        if contribution_frequency not in FREQ_MAP:
-            raise ValueError(f"Invalid contribution frequency: '{contribution_frequency}'")
-
         self.init_value = init_value
-        self.rate = rate
+        self.interest_rate = interest_rate
         self.years = years
-        self.contributions = contributions
-        self.compounding = compounding
-        self.contribution_frequency = contribution_frequency
+        self.contribution = contribution
+        self.comp_freq = comp_freq
+        self.contribution_freq = contribution_freq
         self.contribution_timing = contribution_timing
-        self.apply_tax = apply_tax
         self.tax_rate = tax_rate
 
-        self.compound_periods = FREQ_MAP[compounding]
-        self.contrib_periods = FREQ_MAP[contribution_frequency]
-
+        self.compound_periods = FREQ_MAP[comp_freq]
+        self.contrib_periods = FREQ_MAP[contribution_freq]
 
     def __repr__(self) -> str:
         """
         Returns a precise string representation of the object for debugging and development.
         """
-
         return (
             f"CompoundInterest("
             f"init_value={self.init_value}, "
-            f"rate={self.rate}, "
+            f"interest_rate={self.interest_rate}, "
             f"years={self.years}, "
-            f"contributions={self.contributions}, "
-            f"compounding='{self.compounding}', "
-            f"contribution_frequency='{self.contribution_frequency}', "
+            f"comp_freq='{self.comp_freq}', "
+            f"contribution={self.contribution}, "
+            f"contribution_freq='{self.contribution_freq}', "
             f"contribution_timing='{self.contribution_timing}', "
-            f"apply_tax={self.apply_tax}, "
             f"tax_rate={self.tax_rate})"
         )
-    
 
     def __str__(self) -> str:
         """
         Returns a user-friendly summary of the compound interest scenario.
         """
-
-        tax_info = f"{self.tax_rate * 100:.1f}%" if self.apply_tax else "No tax"
+        tax_info = f"{self.tax_rate * 100:.1f}%" if self.tax_rate > 0 else "No tax"
         return (
             f"📊 Compound Interest Summary\n"
             f"------------------------------\n"
             f"Initial Value:         ${self.init_value:,.2f}\n"
-            f"Annual Rate:           {self.rate * 100:.2f}%\n"
+            f"Annual Rate:           {self.interest_rate * 100:.2f}%\n"
             f"Years:                 {self.years}\n"
-            f"Contribution:          ${self.contributions:,.2f} ({self.contribution_frequency}, {self.contribution_timing})\n"
-            f"Compounding:           {self.compounding.capitalize()}\n"
+            f"Contribution:          ${self.contribution:,.2f} ({self.contribution_freq}, {self.contribution_timing})\n"
+            f"Compounding:           {self.comp_freq.capitalize()}\n"
             f"Tax on Interest:       {tax_info}\n"
             f"Future Value:          ${self.future_value():,.2f}"
         )
-    
 
     def __call__(self) -> float:
         """
@@ -179,217 +161,215 @@ class CompoundInterest:
         """
         return self.future_value()
 
-
     def __eq__(self, other: object) -> bool:
         """
         Compares two instances of CompoundInterest for equality.
         """
-
         if not isinstance(other, CompoundInterest):
             return NotImplemented
         return self.__dict__ == other.__dict__
 
-
-
-    def future_value(self) -> float:
+    def future_value(self, inflation: float = 0.0) -> float:
         """
         Calculates the future value of the investment.
 
-        Returns:
-            float: Final balance after the specified number of years.
+        Parameters:
+        inflation (float): Annual inflation rate as a decimal (e.g., 0.02 for 2% inflation). Default is 0.0.
         """
 
-        total_periods = int(self.years * self.compound_periods)
-        period_rate = self.rate / self.compound_periods
+        if not isinstance(inflation, (float, int)):
+            raise ValueError("Inflation must be a numeric type (float or int).")
+        if not (0 <= inflation <= 1):
+            raise ValueError("Inflation must be a value between 0 and 1.")
+
+        compound_periods = FREQ_MAP.get(self.comp_freq, 1)
+        contrib_periods = FREQ_MAP.get(self.contribution_freq, 1)
+        freq = max(compound_periods, contrib_periods)
+        total_periods = int(self.years * freq)
+        period_rate = self.interest_rate / compound_periods
+
         balance = self.init_value
+        compound_interval = freq // compound_periods
+        n_contrib = int(self.years * contrib_periods)
+
+        if self.contribution_timing == "start":
+            deposit_days = {
+                int(math.floor(i * total_periods / n_contrib)) + 1
+                for i in range(n_contrib)
+            }
+        else:
+            deposit_days = {
+                int(math.floor((i + 1) * total_periods / n_contrib))
+                for i in range(n_contrib)
+            }
+
+        contrib_count = 0
 
         for period in range(1, total_periods + 1):
-            # Add contributions before interest
-            if self.contribution_timing == "start":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
+            if self.contribution_timing == "start" and period in deposit_days:
+                if contrib_count < n_contrib:
+                    balance += self.contribution
+                    contrib_count += 1
 
-            # Apply interest
-            interest = balance * period_rate
-            if self.apply_tax:
-                interest *= (1 - self.tax_rate)
-            balance += interest
+            if period % compound_interval == 0:
+                interest = balance * period_rate
+                if self.tax_rate > 0:
+                    interest *= 1 - self.tax_rate
+                balance += interest
 
-            # Add contributions after interest
-            if self.contribution_timing == "end":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
+            if self.contribution_timing == "end" and period in deposit_days:
+                if contrib_count < n_contrib:
+                    balance += self.contribution
+                    contrib_count += 1
 
-        return balance
-    
+        # Adjust for inflation if provided
+        if inflation > 0:
+            balance = balance / ((1 + inflation) ** self.years)
+
+        return round(balance, 2)
 
     def breakdown(self) -> pd.DataFrame:
         """
         Returns a detailed breakdown of each period as a Pandas DataFrame.
 
         Columns:
-            Label, Period, Starting Balance, Contribution, Interest, Tax Paid, Ending Balance
+            Label, Period, Starting Balance, Contribution at <start/end>, Gross Interest, Net Interest, Tax Paid, Ending Balance
         """
+        compound_periods = FREQ_MAP.get(self.comp_freq, 1)
+        contrib_periods = FREQ_MAP.get(self.contribution_freq, 1)
+        freq = max(compound_periods, contrib_periods)
+        total_periods = int(self.years * freq)
+        period_rate = self.interest_rate / compound_periods
 
-        total_periods = int(self.years * self.compound_periods)
-        period_rate = self.rate / self.compound_periods
+        if contrib_periods >= compound_periods:
+            label_base = LABEL_MAP.get(self.contribution_freq, "Period")
+        else:
+            label_base = LABEL_MAP.get(self.comp_freq, "Period")
+
+        data = []
         balance = self.init_value
+        compound_interval = freq // compound_periods
+        n_contrib = int(self.years * contrib_periods)
 
-        label_base = LABEL_MAP.get(self.compounding, "Period")
+        if self.contribution_timing == "start":
+            deposit_days = {
+                int(math.floor(i * total_periods / n_contrib)) + 1
+                for i in range(n_contrib)
+            }
+        else:
+            deposit_days = {
+                int(math.floor((i + 1) * total_periods / n_contrib))
+                for i in range(n_contrib)
+            }
 
-        data: List[Dict[str, float]] = []
+        contrib_count = 0
 
         for period in range(1, total_periods + 1):
             starting_balance = balance
-            contribution = 0.0
+            contribution_val = 0.0
+            gross_interest = 0.0
+            net_interest = 0.0
             tax_paid = 0.0
 
-            # Contribution before interest
-            if self.contribution_timing == "start":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
-                    contribution = self.contributions
+            if self.contribution_timing == "start" and period in deposit_days:
+                if contrib_count < n_contrib:
+                    balance += self.contribution
+                    contribution_val = self.contribution
+                    contrib_count += 1
+                    starting_balance = balance
 
-            # Interest calculation
-            gross_interest = balance * period_rate
-            net_interest = gross_interest
-            if self.apply_tax:
-                tax_paid = gross_interest * self.tax_rate
-                net_interest = gross_interest - tax_paid
+            if period % compound_interval == 0:
+                gross_interest = balance * period_rate
+                net_interest = gross_interest
+                if self.tax_rate > 0:
+                    tax_paid = gross_interest * self.tax_rate
+                    net_interest = gross_interest - tax_paid
 
             balance += net_interest
 
-            # Contribution after interest
-            if self.contribution_timing == "end":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
-                    contribution = self.contributions
+            if self.contribution_timing == "end" and period in deposit_days:
+                if contrib_count < n_contrib:
+                    balance += self.contribution
+                    contribution_val = self.contribution
+                    contrib_count += 1
 
-            data.append({
-                "Label": label_base,
-                "Period": period,
-                "Starting Balance": round(starting_balance, 2),
-                "Contribution": round(contribution, 2),
-                "Interest": round(net_interest, 2),
-                "Tax Paid": round(tax_paid, 2),
-                "Ending Balance": round(balance, 2),
-            })
+            data.append(
+                {
+                    "label": label_base,
+                    "period": period,
+                    "starting_balance": round(starting_balance, 2),
+                    f"contribution_at_{self.contribution_timing}": round(
+                        contribution_val, 2
+                    ),
+                    "gross_interest": round(gross_interest, 2),
+                    "net_interest": round(net_interest, 2),
+                    "tax_paid": round(tax_paid, 2),
+                    "ending_balance": round(balance, 2),
+                }
+            )
 
         return pd.DataFrame(data)
-    
 
     def total_contributions(self) -> float:
         """
         Returns the total amount contributed over the investment period.
         """
-
-        total = self.contributions * self.years * self.contrib_periods
+        total = self.contribution * self.years * self.contrib_periods
         return round(total, 2)
 
+    def total_gross_interest_earned(self) -> float:
+        """
+        Returns the total gross interest earned over the investment period.
+        """
+        df = self.breakdown()
+        return round(df["gross_interest"].sum(), 2)
 
-    def total_interest_earned(self) -> float:
+    def total_net_interest_earned(self) -> float:
         """
         Returns the total net interest earned over the investment period.
         """
-
-        final_value = self.future_value()
-        total_contrib = self.total_contributions()
-        net_interest = final_value - self.init_value - total_contrib
-        return round(net_interest, 2)
-    
+        df = self.breakdown()
+        return round(df["net_interest"].sum(), 2)
 
     def total_tax_paid(self) -> float:
         """
         Returns the total tax paid on interest over the investment period.
         """
-
-        if not self.apply_tax:
+        if self.tax_rate == 0:
             return 0.0
         df = self.breakdown()
-        return round(df["Tax Paid"].sum(), 2)
+        return round(df["tax_paid"].sum(), 2)
 
-
-    def goal_year(self, target_amount: float) -> Optional[float]:
+    def summary(self) -> None:
         """
-        Estimates how many years are needed to reach a target amount.
-
-        Returns None if the goal cannot be reached.
+        Prints a summary of the compound interest scenario.
         """
 
-        total_periods = int(self.years * self.compound_periods)
-        period_rate = self.rate / self.compound_periods
-        balance = self.init_value
+        initial = self.init_value
+        total_contrib = self.total_contributions()
+        gross_int = self.total_gross_interest_earned()
+        net_int = self.total_net_interest_earned()
+        tax = self.total_tax_paid()
+        end_val = self.future_value()
 
-        for period in range(1, total_periods + 1):
-            if self.contribution_timing == "start":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
+        items = [
+            ("Initial Investment", initial),
+            ("Total Contributions", total_contrib),
+            ("Gross Interest Earned", gross_int),
+            ("Net Interest Earned", net_int),
+            ("Tax Paid", tax),
+            ("Future Value", end_val),
+        ]
 
-            interest = balance * period_rate
-            if self.apply_tax:
-                interest *= (1 - self.tax_rate)
-            balance += interest
+        max_label_length = max(len(label) for label, _ in items)
+        header = "PyCIC Summary"
+        border = "=" * (max_label_length + 30)
 
-            if self.contribution_timing == "end":
-                if (period * self.contrib_periods) % self.compound_periods == 0:
-                    balance += self.contributions
+        print(border)
+        print(header.center(max_label_length + 30))
+        print(border)
 
-            if balance >= target_amount:
-                return round(period / self.compound_periods, 2)
+        for label, value in items:
+            print(f"{label:<{max_label_length}} :    {value:,.2f}")
 
-        return None
-    
-
-    def adjust_for_inflation(self, inflation_rate: float) -> float:
-        """
-        Returns the future value adjusted for a given annual inflation rate.
-
-        Parameters:
-            inflation_rate (float): Annual inflation rate (e.g., 0.02 for 2%)
-
-        Returns:
-            float: Future value in today's money.
-        """
-        
-        if not isinstance(inflation_rate, (int, float)) or not (0 <= inflation_rate <= 1):
-            raise ValueError("Inflation rate must be a float between 0 and 1.")
-
-        nominal_fv = self.future_value()
-        real_fv = nominal_fv / ((1 + inflation_rate) ** self.years)
-        return round(real_fv, 2)
-    
-
-    def export_breakdown_to_csv(self, filename: str = "py-cic_breakdown.csv") -> None:
-        """
-        Export the period-by-period breakdown to a CSV file.
-
-        Parameters:
-            filename (str): Name of the CSV file to save (e.g., 'output.csv').
-                            Must end with '.csv' and not contain any directory path.
-
-        Raises:
-            TypeError: If the filename is not a string.
-            ValueError: If the filename is not a '.csv' file or contains directories.
-        """
-
-        validate_filename(filename, ".csv")
-        df = self.breakdown()
-        df.to_csv(filename, index=False)
-
-
-    def export_breakdown_to_excel(self, filename: str = "py-cic_breakdown.xlsx") -> None:
-        """
-        Export the period-by-period breakdown to an Excel (.xlsx) file.
-
-        Parameters:
-            filename (str): Name of the Excel file to save (e.g., 'output.xlsx').
-                            Must end with '.xlsx' and not contain any directory path.
-
-        Raises:
-            TypeError: If the filename is not a string.
-            ValueError: If the filename is not a '.xlsx' file or contains directories.
-        """
-
-        validate_filename(filename, ".xlsx")
-        df = self.breakdown()
-        df.to_excel(filename, index=False)
+        print(border)
