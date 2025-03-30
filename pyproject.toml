@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycic"
+version = "0.1.0"
+description = "A flexible compound interest calculator with support for tax, inflation, and export."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Fabian Bauer", email = "fab.bauer@outlook.com" }
+]
+keywords = ["finance", "compound interest", "investment", "calculator"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial",
+]
+
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0,<3.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/Fab2102/pycic"
+Documentation = "https://github.com/Fab2102/pycic#readme"
+Source = "https://github.com/Fab2102/pycic"
+Tracker = "https://github.com/Fab2102/pycic/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
