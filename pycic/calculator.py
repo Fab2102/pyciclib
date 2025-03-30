@@ -177,7 +177,7 @@ class CompoundInterest:
         inflation (float): Annual inflation rate as a decimal (e.g., 0.02 for 2% inflation). Default is 0.0.
         """
 
-        if not isinstance(inflation, (float, int)):
+        if not isinstance(inflation, (float, int)) or isinstance(inflation, bool):
             raise ValueError("Inflation must be a numeric type (float or int).")
         if not (0 <= inflation <= 1):
             raise ValueError("Inflation must be a value between 0 and 1.")

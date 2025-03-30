@@ -91,3 +91,30 @@ def test_optional_parameters_defaults():
         ci.contribution_timing == "end"
     ), "Default contribution_timing should be 'end'"
     assert ci.tax_rate == 0.0, "Default tax_rate should be 0.0"
+
+
+invalid_inflation_inputs = [
+    "0.03",
+    "high",
+    True,
+    [0.03],
+    {"rate": 0.03},
+    None,
+    complex(0.03),
+]
+
+
+@pytest.mark.parametrize("invalid_inflation", invalid_inflation_inputs)
+def test_future_value_invalid_inflation_raises(invalid_inflation):
+    ci = CompoundInterest(
+        init_value=10000,
+        interest_rate=0.05,
+        years=5,
+        contribution=100,
+        comp_freq="annually",
+        contribution_freq="annually",
+        contribution_timing="end",
+        tax_rate=0.25,
+    )
+    with pytest.raises(ValueError, match="Inflation must be a numeric type"):
+        ci.future_value(inflation=invalid_inflation)

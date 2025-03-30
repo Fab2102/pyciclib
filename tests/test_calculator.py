@@ -4,12 +4,13 @@ from pycic.calculator import CompoundInterest
 
 
 test_cases = [
+    # general test cases
     (10000, 0.05, 5, 100, "annually", "annually", "start", 0.25, 12_580.14),
     (10000, 0.05, 5, 100, "annually", "annually", "end", 0.25, 12_559.93),
     (10000, 0.05, 5, 0, "annually", "annually", "end", 0.25, 12_021.00),
     (10000, 0.05, 5, 100, "annually", "annually", "end", 0.0, 13_315.38),
     (10000, 0.05, 5, 100, "annually", "annually", "end", 0.10, 13_008.89),
-    # Compounding vs. Contribution Frequency Combinations:
+    # Compounding vs. Contribution Frequency Combinations
     (10000, 0.05, 1, 100, "annually", "annually", "end", 0.25, 10_475.00),
     (10000, 0.05, 1, 100, "annually", "semiannually", "end", 0.25, 10_578.75),
     (10000, 0.05, 1, 100, "annually", "quarterly", "end", 0.25, 10_786.25),
@@ -123,3 +124,41 @@ def test_compound_interest_breakdown(
     assert math.isclose(
         last_balance, expected, abs_tol=0.01
     ), f"Expected {expected}, got {last_balance}"
+
+
+inflation_test_cases = [
+    (10000, 0.05, 5, 100, "annually", "annually", "end", 0.25, 0.02, 11_375.92),
+    (10000, 0.05, 5, 100, "annually", "annually", "start", 0.25, 0.10, 7_811.28),
+]
+
+
+@pytest.mark.parametrize(
+    "init_value, interest_rate, years, contribution, comp_freq, contribution_freq, contribution_timing, tax_rate, inflation, expected",
+    inflation_test_cases,
+)
+def test_compound_interest_future_value_with_inflation(
+    init_value,
+    interest_rate,
+    years,
+    contribution,
+    comp_freq,
+    contribution_freq,
+    contribution_timing,
+    tax_rate,
+    inflation,
+    expected,
+):
+    ci = CompoundInterest(
+        init_value=init_value,
+        interest_rate=interest_rate,
+        years=years,
+        contribution=contribution,
+        comp_freq=comp_freq,
+        contribution_freq=contribution_freq,
+        contribution_timing=contribution_timing,
+        tax_rate=tax_rate,
+    )
+    result = ci.future_value(inflation=inflation)
+    assert math.isclose(
+        result, expected, abs_tol=0.01
+    ), f"Expected {expected}, got {result}"
