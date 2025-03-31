@@ -4,7 +4,7 @@
 
 <p align="left">PyCIC is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.<br>It supports variable compounding frequencies, periodic contributions, tax treatment, inflation adjustment, and rich DataFrame outputs.</p>
 
-###
+<br>
 
 <h2 align="left">Installation</h2>
 
@@ -14,7 +14,7 @@
 pip install pycic
 ```
 
-###
+<br>
 
 <h2 align="left">Example Usage</h2>
 
@@ -49,7 +49,7 @@ calc.breakdown().to_csv("investment_details.csv")
 calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 ```
 
-###
+<br>
 
 <h2 align="left">Class Parameters</h2>
 
@@ -75,7 +75,7 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 - `contribution_freq`: Frequency of contributions (`"annually"`, `"semiannually"`, etc.)
 
-- `contribution_timing`: Payment at period start/end. (`"start"`, `"end"`)
+- `contribution_timing`: Payment at start/end of period. (`"start"`, `"end"`)
 
 - `tax_rate`: Optional tax on interest
 
@@ -83,19 +83,19 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 <h2 align="left">Available Methods</h2>
 
-| Method                          | Description                                                                                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `future_value(inflation=0.02)`  | Calculates the final future value (with optional inflation)                                                                                 |
-| `breakdown()`                   | Returns a pandas dataframe with all periods listed (see table below)                                                                        |
-| `summary()`                     | Prints a readable summary of initial investment, future value, total contributions, total gross and net interest earned, and total tax paid |
-| `total_contributions()`         | Total amount contributed                                                                                                                    |
-| `total_gross_interest_earned()` | Interest before taxes                                                                                                                       |
-| `total_net_interest_earned()`   | Interest after taxes                                                                                                                        |
-| `total_tax_paid()`              | Total tax paid on interest                                                                                                                  |
+| Method                          | Description                                                          |
+| ------------------------------- | -------------------------------------------------------------------- |
+| `future_value(inflation=0.02)`  | Calculates the final future value (with optional inflation)          |
+| `breakdown()`                   | Returns a pandas dataframe with all periods listed (see table below) |
+| `summary()`                     | Prints a readable summary of the investment                          |
+| `total_contributions()`         | Total amount contributed                                             |
+| `total_gross_interest_earned()` | Total interest before taxes                                          |
+| `total_net_interest_earned()`   | Total interest after taxes                                           |
+| `total_tax_paid()`              | Total tax paid on interest                                           |
 
-###
+<br>
 
-<h2 align="left">Table output from breakdown() method</h2>
+<h2 align="left">Sample table output of `breakdown()`</h2>
 
 ###
 
@@ -107,7 +107,7 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 | Year  | 4      | 11479.11         | 100                 | 573.96         | 430.47       | 143.49   | 12009.57       |
 | Year  | 5      | 12009.57         | 100                 | 600.48         | 450.36       | 150.12   | 12559.93       |
 
-###
+<br>
 
 <h2 align="left">License</h2>
 
