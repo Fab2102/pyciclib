@@ -24,7 +24,6 @@ pip install pycic
 import pycic as pc
 
 # creating an instance
-
 calc = pc.CompoundInterest(
 init_value=10000,
 interest_rate=0.05,
@@ -37,7 +36,6 @@ tax_rate=0.25,
 )
 
 # function overview
-
 calc.summary()
 print(calc.breakdown())
 print(calc.future_value(inflation=0.02))
@@ -47,16 +45,15 @@ print(calc.total_net_interest_earned())
 print(calc.total_tax_paid())
 
 # you can also use pandas csv function to create a csv
-
 calc.breakdown().to_csv()
-
 ```
 
 ###
 
 <h2 align="left">Class Parameters</h2>
-
+<h3 align="left">Required Parameters</h2>
 ###
+<h3 align="left">Optional Parameters</h2>
 
 <p align="left"><Text></p>
 
