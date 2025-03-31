@@ -2,10 +2,7 @@
 
 ###
 
-<p align="left">
-PyCIC is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.<br>
-It supports variable compounding frequencies, periodic contributions, tax treatment, inflation adjustment, and rich DataFrame outputs.
-</p>
+<p align="left">PyCIC is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.<br>It supports variable compounding frequencies, periodic contributions, tax treatment, inflation adjustment, and rich DataFrame outputs.</p>
 
 ###
 
@@ -13,9 +10,9 @@ It supports variable compounding frequencies, periodic contributions, tax treatm
 
 ###
 
-<p align="left">
-<code>pip install pycic</code>
-</p>
+```bash
+pip install pycic
+```
 
 ###
 
@@ -23,32 +20,37 @@ It supports variable compounding frequencies, periodic contributions, tax treatm
 
 ###
 
-<p align="left">
-<pre>
-from pycic import CompoundInterest
+```python
+import pycic as pc
 
-# Create a compound interest calculator instance
-ci = CompoundInterest(
-    init_value=10000,
-    interest_rate=0.07,
-    years=20,
-    comp_freq="monthly",
-    contribution=200,
-    contribution_freq="monthly",
-    contribution_timing="end",
-    tax_rate=0.15
+# creating an instance
+
+calc = pc.CompoundInterest(
+init_value=10000,
+interest_rate=0.05,
+years=5,
+comp_freq="annually",
+contribution=100,
+contribution_freq="annually",
+contribution_timing="end",
+tax_rate=0.25,
 )
 
-# Calculate future value with inflation adjustment
-print("Future Value:", ci.future_value(inflation=0.02))
+# function overview
 
-# Display a detailed breakdown (returns a Pandas DataFrame)
-print(ci.breakdown().head())
+calc.summary()
+print(calc.breakdown())
+print(calc.future_value(inflation=0.02))
+print(calc.total_contributions())
+print(calc.total_gross_interest_earned())
+print(calc.total_net_interest_earned())
+print(calc.total_tax_paid())
 
-# Print a summary of the investment scenario
-ci.summary()
-</pre>
-</p>
+# you can also use pandas csv function to create a csv
+
+calc.breakdown().to_csv()
+
+```
 
 ###
 
@@ -56,16 +58,7 @@ ci.summary()
 
 ###
 
-<p align="left">
-<strong>init_value</strong>: Initial investment amount (float).<br>
-<strong>interest_rate</strong>: Annual interest rate as a decimal (e.g., 0.07 for 7%).<br>
-<strong>years</strong>: Investment duration in years (float).<br>
-<strong>comp_freq</strong>: Compounding frequency (e.g., "annually", "monthly", etc.).<br>
-<strong>contribution</strong>: Amount contributed at each interval (default: 0.0).<br>
-<strong>contribution_freq</strong>: Frequency of contributions (default: same as compounding).<br>
-<strong>contribution_timing</strong>: When contributions are made ("start" or "end", default: "end").<br>
-<strong>tax_rate</strong>: Tax rate applied to interest as a decimal (default: 0.0).
-</p>
+<p align="left"><Text></p>
 
 ###
 
@@ -73,15 +66,7 @@ ci.summary()
 
 ###
 
-<p align="left">
-<strong>future_value(inflation=0.0)</strong>: Calculates the future value of the investment, optionally adjusting for inflation.<br>
-<strong>breakdown()</strong>: Returns a detailed period-by-period breakdown as a Pandas DataFrame.<br>
-<strong>total_contributions()</strong>: Computes the total amount contributed over the investment period.<br>
-<strong>total_gross_interest_earned()</strong>: Returns the total gross interest earned.<br>
-<strong>total_net_interest_earned()</strong>: Returns the total net interest earned.<br>
-<strong>total_tax_paid()</strong>: Returns the total tax paid on interest.<br>
-<strong>summary()</strong>: Prints a summary of the compound interest scenario.
-</p>
+<p align="left"><Text></p>
 
 ###
 
@@ -89,19 +74,7 @@ ci.summary()
 
 ###
 
-<p align="left">
-The <code>breakdown()</code> method outputs a Pandas DataFrame with the following columns:
-<ul>
-  <li><strong>label</strong>: Period label (derived from frequency settings).</li>
-  <li><strong>period</strong>: The sequential period number.</li>
-  <li><strong>starting_balance</strong>: Balance at the beginning of the period.</li>
-  <li><strong>contribution_at_start/end</strong>: Contribution added at the period (depending on timing).</li>
-  <li><strong>gross_interest</strong>: Interest calculated before tax.</li>
-  <li><strong>net_interest</strong>: Interest after tax deductions.</li>
-  <li><strong>tax_paid</strong>: Tax amount deducted from the gross interest.</li>
-  <li><strong>ending_balance</strong>: Balance at the end of the period.</li>
-</ul>
-</p>
+<p align="left"><Text></p>
 
 ###
 
@@ -109,6 +82,10 @@ The <code>breakdown()</code> method outputs a Pandas DataFrame with the followin
 
 ###
 
-<p align="left">
-MIT License © 2025 [Your Name]
-</p>
+<p align="left"><Text></p>
+
+###
+
+```
+
+```
