@@ -1,152 +1,114 @@
-# 📈 PyCIC – Python Compound Interest Calculator
+<h1 align="left">PyCIC – Python Compound Interest Calculator</h1>
 
-**PyCIC** is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.  
+###
+
+<p align="left">
+PyCIC is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.<br>
 It supports variable compounding frequencies, periodic contributions, tax treatment, inflation adjustment, and rich DataFrame outputs.
+</p>
 
----
+###
 
-## 🚀 Features
+<h2 align="left">Installation</h2>
 
-- Customizable compounding frequency (`daily`, `monthly`, `quarterly`, etc.)
-- Periodic contributions at start or end of intervals
-- Optional tax rate on interest earned
-- Inflation-adjusted future value calculation
-- Pandas DataFrame breakdown of every period
-- Summary statistics including gross/net interest and total tax paid
+###
 
----
+<p align="left">
+<code>pip install pycic</code>
+</p>
 
-## 📦 Installation
+###
 
-```bash
-pip install pycic
-```
+<h2 align="left">Example Usage</h2>
 
-Or clone and install locally:
+###
 
-```bash
-git clone https://github.com/Fab2102/pycic.git
-cd pycic
-pip install -e .[dev]
-```
-
----
-
-## 🧺 Example Usage
-
-```python
+<p align="left">
+<pre>
 from pycic import CompoundInterest
 
-calc = CompoundInterest(
+# Create a compound interest calculator instance
+ci = CompoundInterest(
     init_value=10000,
-    interest_rate=0.05,
-    years=5,
-    comp_freq="annually",
-    contribution=100,
-    contribution_freq="annually",
+    interest_rate=0.07,
+    years=20,
+    comp_freq="monthly",
+    contribution=200,
+    contribution_freq="monthly",
     contribution_timing="end",
-    tax_rate=0.25,
+    tax_rate=0.15
 )
 
-# function overview
-calc.summary()
-print(calc.breakdown())
-print(calc.future_value(inflation=0.02))
-print(calc.total_contributions())
-print(calc.total_gross_interest_earned())
-print(calc.total_net_interest_earned())
-print(calc.total_tax_paid())
+# Calculate future value with inflation adjustment
+print("Future Value:", ci.future_value(inflation=0.02))
 
-# create a csv file from the detailed breakdown
-calc.breakdown().to_csv()
-```
+# Display a detailed breakdown (returns a Pandas DataFrame)
+print(ci.breakdown().head())
 
----
+# Print a summary of the investment scenario
+ci.summary()
+</pre>
+</p>
 
-## 📈 Sample Output (Terminal)
+###
 
-```
-===================================================
-                   PyCIC Summary
-===================================================
-Initial Investment    :    10,000.00
-Total Contributions   :    500.00
-Gross Interest Earned :    2,746.58
-Net Interest Earned   :    2,059.93
-Tax Paid              :    686.65
-Future Value          :    12,559.93
-===================================================
-```
+<h2 align="left">Class Parameters</h2>
 
----
+###
 
-## 📊 Sample Data Breakdown (Annual, 5 Years)
+<p align="left">
+<strong>init_value</strong>: Initial investment amount (float).<br>
+<strong>interest_rate</strong>: Annual interest rate as a decimal (e.g., 0.07 for 7%).<br>
+<strong>years</strong>: Investment duration in years (float).<br>
+<strong>comp_freq</strong>: Compounding frequency (e.g., "annually", "monthly", etc.).<br>
+<strong>contribution</strong>: Amount contributed at each interval (default: 0.0).<br>
+<strong>contribution_freq</strong>: Frequency of contributions (default: same as compounding).<br>
+<strong>contribution_timing</strong>: When contributions are made ("start" or "end", default: "end").<br>
+<strong>tax_rate</strong>: Tax rate applied to interest as a decimal (default: 0.0).
+</p>
 
-| label | period | starting_balance | contribution_at_end | gross_interest | net_interest | tax_paid | ending_balance |
-| ----- | ------ | ---------------- | ------------------- | -------------- | ------------ | -------- | -------------- |
-| Year  | 1      | 10000.00         | 100                 | 500.00         | 375.00       | 125.00   | 10475.00       |
-| Year  | 2      | 10475.00         | 100                 | 523.75         | 392.81       | 130.94   | 10967.81       |
-| Year  | 3      | 10967.81         | 100                 | 548.39         | 411.29       | 137.10   | 11479.11       |
-| Year  | 4      | 11479.11         | 100                 | 573.96         | 430.47       | 143.49   | 12009.57       |
-| Year  | 5      | 12009.57         | 100                 | 600.48         | 450.36       | 150.12   | 12559.93       |
+###
 
-_This table reflects annual compounding and contributions with a 25% tax rate over 5 years._
+<h2 align="left">Available Methods</h2>
 
----
+###
 
-## 🔹 Class Interface
+<p align="left">
+<strong>future_value(inflation=0.0)</strong>: Calculates the future value of the investment, optionally adjusting for inflation.<br>
+<strong>breakdown()</strong>: Returns a detailed period-by-period breakdown as a Pandas DataFrame.<br>
+<strong>total_contributions()</strong>: Computes the total amount contributed over the investment period.<br>
+<strong>total_gross_interest_earned()</strong>: Returns the total gross interest earned.<br>
+<strong>total_net_interest_earned()</strong>: Returns the total net interest earned.<br>
+<strong>total_tax_paid()</strong>: Returns the total tax paid on interest.<br>
+<strong>summary()</strong>: Prints a summary of the compound interest scenario.
+</p>
 
-### `CompoundInterest(...)`
+###
 
-Initialize with:
+<h2 align="left">Table from breakdown() method</h2>
 
-- `init_value`: Initial investment (float)
-- `interest_rate`: Annual rate, as a decimal (e.g., 0.05 for 5%)
-- `years`: Duration in years (float)
-- `comp_freq`: Compounding frequency (`"monthly"`, `"weekly"`, etc.)
-- `contribution`: Amount added each interval (optional)
-- `contribution_freq`: Frequency of contributions (optional)
-- `contribution_timing`: `"start"` or `"end"` (default: `"end"`)
-- `tax_rate`: Optional tax on interest (default: 0.0)
+###
 
----
+<p align="left">
+The <code>breakdown()</code> method outputs a Pandas DataFrame with the following columns:
+<ul>
+  <li><strong>label</strong>: Period label (derived from frequency settings).</li>
+  <li><strong>period</strong>: The sequential period number.</li>
+  <li><strong>starting_balance</strong>: Balance at the beginning of the period.</li>
+  <li><strong>contribution_at_start/end</strong>: Contribution added at the period (depending on timing).</li>
+  <li><strong>gross_interest</strong>: Interest calculated before tax.</li>
+  <li><strong>net_interest</strong>: Interest after tax deductions.</li>
+  <li><strong>tax_paid</strong>: Tax amount deducted from the gross interest.</li>
+  <li><strong>ending_balance</strong>: Balance at the end of the period.</li>
+</ul>
+</p>
 
-## 📈 Available Methods
+###
 
-| Method                          | Description                                      |
-| ------------------------------- | ------------------------------------------------ |
-| `future_value()`                | Calculates final value (with optional inflation) |
-| `breakdown()`                   | Returns full period-wise DataFrame               |
-| `summary()`                     | Prints a readable summary                        |
-| `total_contributions()`         | Total amount contributed                         |
-| `total_gross_interest_earned()` | Interest before taxes                            |
-| `total_net_interest_earned()`   | Interest after taxes                             |
-| `total_tax_paid()`              | Total tax paid on interest                       |
+<h2 align="left">License</h2>
 
----
+###
 
-## 📁 Project Structure
-
-```
-pycic/
-├── __init__.py
-├── core.py          # Contains CompoundInterest
-├── utils.py         # Frequency maps, label mapping
-tests/
-pyproject.toml
-README.md
-LICENSE
-```
-
----
-
-## 📃 License
-
-MIT License © 2024 Fabian Bauer
-
----
-
-## 🌐 Links
-
-- [📦 PyPI (coming soon)](https://pypi.org/project/pycic)
-- [📁 GitHub Repo](https://github.com/Fab2102/pycic)
+<p align="left">
+MIT License © 2025 [Your Name]
+</p>
