@@ -55,7 +55,7 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 ###
 
-<h3 align="left">Required Parameters</h2>
+<h3 align="left">Required Parameters:</h2>
 
 ###
 
@@ -69,7 +69,7 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 <br>
 
-<h3 align="left">Optional Parameters</h2>
+<h3 align="left">Optional Parameters:</h2>
 
 - `contribution`: Amount added each interval
 
@@ -93,9 +93,9 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 | `total_net_interest_earned()`   | Total interest after taxes                                           |
 | `total_tax_paid()`              | Total tax paid on interest                                           |
 
-###
+<br>
 
-<h2 align="left">Sample table output of `breakdown()`</h2>
+<h2 align="left">Sample table output</h2>
 
 ###
 
