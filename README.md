@@ -51,8 +51,10 @@ calc.breakdown().to_csv()
 ###
 
 <h2 align="left">Class Parameters</h2>
-<h3 align="left">Required Parameters</h2>
+
 ###
+
+<h3 align="left">Required Parameters</h2>
 <h3 align="left">Optional Parameters</h2>
 
 <p align="left"><Text></p>
