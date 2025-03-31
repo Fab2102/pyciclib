@@ -4,7 +4,7 @@
 
 <p align="left">PyCIC is a flexible compound interest calculator designed for serious financial modeling, simulations, and personal finance tools.<br>It supports variable compounding frequencies, periodic contributions, tax treatment, inflation adjustment, and rich DataFrame outputs.</p>
 
-<br>
+###
 
 <h2 align="left">Installation</h2>
 
@@ -14,7 +14,7 @@
 pip install pycic
 ```
 
-<br>
+###
 
 <h2 align="left">Example Usage</h2>
 
@@ -49,7 +49,7 @@ calc.breakdown().to_csv("investment_details.csv")
 calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 ```
 
-<br>
+###
 
 <h2 align="left">Class Parameters</h2>
 
@@ -93,7 +93,7 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 | `total_net_interest_earned()`   | Total interest after taxes                                           |
 | `total_tax_paid()`              | Total tax paid on interest                                           |
 
-<br>
+###
 
 <h2 align="left">Sample table output of `breakdown()`</h2>
 
@@ -106,11 +106,3 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 | Year  | 3      | 10967.81         | 100                 | 548.39         | 411.29       | 137.10   | 11479.11       |
 | Year  | 4      | 11479.11         | 100                 | 573.96         | 430.47       | 143.49   | 12009.57       |
 | Year  | 5      | 12009.57         | 100                 | 600.48         | 450.36       | 150.12   | 12559.93       |
-
-<br>
-
-<h2 align="left">License</h2>
-
-###
-
-<p align="left">MIT License © 2025 Fabian Bauer</p>
