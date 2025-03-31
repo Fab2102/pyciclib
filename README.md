@@ -2,7 +2,7 @@
 
 ###
 
-<p align="left">PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable compounding frequencies, periodic contributions with flexible frequencies and timings, tax adjustments, and inflation considerations. Additionally the "breakdown()" method can generate a detailed pandas DataFrame to help you visualize your growth scenarios or export them to CSV or Excel files.
+<p align="left">PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable compounding frequencies, periodic contributions with flexible frequencies and timings, tax adjustments and inflation considerations. Additionally, the `breakdown()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
 </p>
 
 ###
