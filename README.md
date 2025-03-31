@@ -55,9 +55,30 @@ calc.breakdown().to_csv()
 ###
 
 <h3 align="left">Required Parameters</h2>
+
+###
+
+- `init_value`: Initial investment (float)
+
+- `interest_rate`: interest rate in p.a., as a decimal (e.g., 0.05 for 5%)
+
+- `years`: Duration in years (float)
+
+- `comp_freq`: Compounding frequency (`"annually"`, `"semiannually"`, etc.)
+
+###
+
 <h3 align="left">Optional Parameters</h2>
 
-<p align="left"><Text></p>
+###
+
+- `contribution`: Amount added each interval (default: 0.0)
+
+- `contribution_freq`: Frequency of contributions (`"annually"`, `"semiannually"`, etc.); (default: same as `comp_freq`)
+
+- `contribution_timing`: `"start"` or `"end"` (default: `"end"`)
+
+- `tax_rate`: Optional tax on interest (default: 0.0)
 
 ###
 
@@ -65,15 +86,43 @@ calc.breakdown().to_csv()
 
 ###
 
-<p align="left"><Text></p>
+| Method | Description |
+
+| ------------------------------- | ------------------------------------------------ |
+
+| `future_value(inflation=0.02)` | Calculates the final future value (with optional inflation) |
+
+| `breakdown()` | Returns a pandas dataframe with all periods listed (table format below this section) |
+
+| `summary()` | Prints a readable summary of initial investment, future value, total contributions, total gross and net interest earned and total tax paid |
+
+| `total_contributions()` | Total amount contributed |
+
+| `total_gross_interest_earned()` | Interest before taxes |
+
+| `total_net_interest_earned()` | Interest after taxes |
+
+| `total_tax_paid()` | Total tax paid on interest |
 
 ###
 
-<h2 align="left">Table from breakdown() method</h2>
+<h2 align="left">Table output from breakdown() method</h2>
 
 ###
 
-<p align="left"><Text></p>
+| label | period | starting_balance | contribution_at_end | gross_interest | net_interest | tax_paid | ending_balance |
+
+| ----- | ------ | ---------------- | ------------------- | -------------- | ------------ | -------- | -------------- |
+
+| Year | 1 | 10000.00 | 100 | 500.00 | 375.00 | 125.00 | 10475.00 |
+
+| Year | 2 | 10475.00 | 100 | 523.75 | 392.81 | 130.94 | 10967.81 |
+
+| Year | 3 | 10967.81 | 100 | 548.39 | 411.29 | 137.10 | 11479.11 |
+
+| Year | 4 | 11479.11 | 100 | 573.96 | 430.47 | 143.49 | 12009.57 |
+
+| Year | 5 | 12009.57 | 100 | 600.48 | 450.36 | 150.12 | 12559.93 |
 
 ###
 
@@ -81,10 +130,4 @@ calc.breakdown().to_csv()
 
 ###
 
-<p align="left"><Text></p>
-
-###
-
-```
-
-```
+<p align="left">MIT License © 2025 Fabian Bauer</p>
