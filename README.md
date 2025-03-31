@@ -95,11 +95,11 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 - `total_net_interest_earned()`: Total interest after taxes
 
-- **`total_tax_paid()`**: Total tax paid on interest
+- `total_tax_paid()`: Total tax paid on interest
 
 <br>
 
-<h2 align="left">Sample table output</h2>
+<h2 align="left" style="border-bottom: none;">Sample table output</h2>
 
 | label | period | starting_balance | contribution_at_end | gross_interest | net_interest | tax_paid | ending_balance |
 | ----- | ------ | ---------------- | ------------------- | -------------- | ------------ | -------- | -------------- |
