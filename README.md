@@ -36,7 +36,7 @@ contribution_timing="end",
 tax_rate=0.25,
 )
 
-# function overview
+# overview of all methods
 calc.summary()
 print(calc.future_value(inflation=0.02))
 print(calc.breakdown())
@@ -45,9 +45,9 @@ print(calc.total_gross_interest_earned())
 print(calc.total_net_interest_earned())
 print(calc.total_tax_paid())
 
-# breakdown() outputs a pandas DataFrame, so you can also call pandas methods on it
-calc.breakdown().to_csv("investment_details.csv")
-calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
+# you can also write the detailed investment table to csv or excel with pandas
+calc.breakdown().to_csv("investment_details.csv", index=False)
+calc.breakdown().to_excel("investment_details.xlsx", index=False, engine="openpyxl")
 ```
 
 ###
