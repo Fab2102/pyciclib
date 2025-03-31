@@ -77,27 +77,29 @@ calc.breakdown().to_excel("investment_details.xlsx", engine="openpyxl")
 
 - `contribution_timing`: Payment at start/end of period. (`"start"`, `"end"`)
 
-- `tax_rate`: Optional tax on interest
+- `tax_rate`: Tax rate applied to interest immediately after compounding.
 
 <br>
 
 <h2 align="left">Available Methods</h2>
 
-| Method                          | Description                                                          |
-| ------------------------------- | -------------------------------------------------------------------- |
-| `future_value(inflation=0.02)`  | Calculates the final future value (with optional inflation)          |
-| `breakdown()`                   | Returns a pandas dataframe with all periods listed (see table below) |
-| `summary()`                     | Prints a readable summary of the investment                          |
-| `total_contributions()`         | Total amount contributed                                             |
-| `total_gross_interest_earned()` | Total interest before taxes                                          |
-| `total_net_interest_earned()`   | Total interest after taxes                                           |
-| `total_tax_paid()`              | Total tax paid on interest                                           |
+- `future_value(inflation=0.02)`: Calculates the final future value (with optional inflation)
+
+- `breakdown()`: Returns a pandas dataframe with all periods listed (see table below)
+
+- `summary()`: Prints a readable summary of the investment
+
+- `total_contributions()`: Total amount contributed
+
+- `total_gross_interest_earned()`: Total interest before taxes
+
+- `total_net_interest_earned()`: Total interest after taxes
+
+- **`total_tax_paid()`**: Total tax paid on interest
 
 <br>
 
 <h2 align="left">Sample table output</h2>
-
-###
 
 | label | period | starting_balance | contribution_at_end | gross_interest | net_interest | tax_paid | ending_balance |
 | ----- | ------ | ---------------- | ------------------- | -------------- | ------------ | -------- | -------------- |
