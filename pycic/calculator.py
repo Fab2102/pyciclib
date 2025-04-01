@@ -1,6 +1,6 @@
 import math
 import pandas as pd
-from typing import Optional, Optional, Literal
+from typing import Optional, Literal
 from .utils import FREQ_MAP, LABEL_MAP
 
 
