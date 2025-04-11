@@ -186,7 +186,7 @@ class CompoundInterest:
         contrib_periods = FREQ_MAP.get(self.contribution_freq, 1)
         freq = max(compound_periods, contrib_periods)
         total_periods = int(self.years * freq)
-        period_rate = self.interest_rate / compound_periods
+        period_rate = (1 + self.interest_rate) ** (1 / compound_periods) - 1
 
         balance = self.init_value
         compound_interval = freq // compound_periods
@@ -239,7 +239,7 @@ class CompoundInterest:
         contrib_periods = FREQ_MAP.get(self.contribution_freq, 1)
         freq = max(compound_periods, contrib_periods)
         total_periods = int(self.years * freq)
-        period_rate = self.interest_rate / compound_periods
+        period_rate = (1 + self.interest_rate) ** (1 / compound_periods) - 1
 
         if contrib_periods >= compound_periods:
             label_base = LABEL_MAP.get(self.contribution_freq, "Period")
@@ -373,3 +373,54 @@ class CompoundInterest:
             print(f"{label:<{max_label_length}} :    {value:,.2f}")
 
         print(border)
+
+    @staticmethod
+    def to_pa_rate(
+        nominal_rate: float,
+        rate_period: Literal["p.a.", "p.s.", "p.q.", "p.m.", "p.biw.", "p.w.", "p.d."],
+    ) -> float:
+        """
+        Converts a nominal interest rate expressed per period (e.g., per month "p.m.")
+        into an effective annual interest rate (EAR), assuming compounding.
+
+        This function is useful when preparing an optimal input rate for the
+        CompoundInterest class in the pycic package — particularly when the
+        interest rate is not originally given per annum.
+
+        For example:
+            - If a user has 0.4% per month (p.m.), this converts it to ~4.9% p.a. EAR.
+            - This EAR can then be passed into pycic.CompoundInterest for realistic modeling.
+
+        Parameters:
+            nominal_rate (float): The nominal interest rate per given period
+                                (e.g., 0.004 for 0.4% per month)
+            rate_period (str): The basis of the nominal rate. One of:
+                - 'p.a.'   → per annum
+                - 'p.s.'   → per semiannual
+                - 'p.q.'   → per quarter
+                - 'p.m.'   → per month
+                - 'p.biw.' → per biweek (every two weeks)
+                - 'p.w.'   → per week
+                - 'p.d.'   → per day
+
+        Returns:
+            float: Effective annual rate (EAR), as a decimal (e.g., 0.049 = 4.9%)
+        """
+
+        PERIOD_MAP = {
+            "p.a.": 1,
+            "p.s.": 2,
+            "p.q.": 4,
+            "p.m.": 12,
+            "p.biw.": 26,
+            "p.w.": 52,
+            "p.d.": 365,
+        }
+
+        if rate_period not in PERIOD_MAP:
+            raise ValueError(
+                f"Invalid rate_period '{rate_period}'. Must be one of: {list(PERIOD_MAP.keys())}"
+            )
+
+        periods_per_year = PERIOD_MAP[rate_period]
+        return (1 + nominal_rate) ** periods_per_year - 1
