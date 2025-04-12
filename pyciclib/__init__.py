@@ -1,5 +1,5 @@
 """
-PyCIC – Python Compound Interest Calculator
+PyCIClib – Python Compound Interest Calculator
 """
 
 __version__ = "0.1.0"
