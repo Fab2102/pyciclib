@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 
 from datetime import datetime
@@ -79,7 +78,7 @@ class CompoundInterest:
         interest_rate: float,
         rate_basis: Literal["p.a.", "p.s.", "p.q.", "p.m.", "p.biw.", "p.w.", "p.d."],
         years: float,
-        start_date: Union[str, datetime] = datetime.today(),
+        start_date: Optional[Union[str, datetime]] = datetime.today(),
         comp_freq: Optional[
             Literal[
                 "annually",
@@ -409,7 +408,7 @@ class CompoundInterest:
 
         return timeline_df
 
-    def final_value(self) -> float:
+    def future_value(self) -> float:
         """
         Returns the final value of the investment as a float.
         """
@@ -472,7 +471,7 @@ class CompoundInterest:
             "Totoal Gross Interest": self.total_gross_interest(),
             "Total Tax Paid": self.total_tax_paid(),
             "Total Net Interest": self.total_net_interest(),
-            "Final Value": self.final_value(),
+            "Final Value": self.future_value(),
         }
         return {"input": input_params, "output": output_params}
 
@@ -534,23 +533,3 @@ class CompoundInterest:
             f"contribution_timing={self.contribution_timing!r}, "
             f"tax_rate={self.tax_rate!r})"
         )
-
-
-if __name__ == "__main__":
-    ci = CompoundInterest(
-        init_value=10_000,
-        interest_rate=0.05,
-        rate_basis="p.a.",
-        years=2,
-        start_date="20.02.2020",
-        comp_freq="annually",
-        contribution=100,
-        contribution_freq="daily",
-        contribution_timing="start",
-        tax_rate=0.15,
-    )
-
-    summary_dict = ci.summary()
-    print(json.dumps(summary_dict, indent=4))
-
-    print(ci.timeline())
