@@ -1,3 +1,7 @@
+<h1 align="center">
+<img src="/assets/pycic_logo.png" width="300">
+</h1><br>
+
 <h1 align="left">PyCIC – Python Compound Interest Calculator</h1>
 
 ###
