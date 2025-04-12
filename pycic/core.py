@@ -102,7 +102,7 @@ class CompoundInterest:
                 "daily",
             ]
         ] = None,
-        contribution_timing: Literal["start", "end"] = "end",
+        contribution_timing: Literal["start", "end"] = None,
         tax_rate: float = 0.0,
     ) -> None:
         """
@@ -126,21 +126,18 @@ class CompoundInterest:
             raise TypeError("init_value must be a number (int or float).")
         if init_value < 0:
             raise ValueError("init_value must be non-negative.")
-
         self.init_value = float(init_value)
 
         if not isinstance(interest_rate, (int, float)):
             raise TypeError("interest_rate must be a number (int or float).")
-        if interest_rate < 0:
-            raise ValueError("interest_rate must be non-negative.")
-
+        if not (0 <= interest_rate <= 1):
+            raise ValueError("interest_rate must be between 0 and 1 (inclusive).")
         self.nominal_interest_rate = float(interest_rate)
 
         if not isinstance(rate_basis, str):
             raise TypeError("rate_basis must be a string.")
         if rate_basis not in self.RATE_BASIS_OPTIONS:
             raise ValueError(f"rate_basis must be one of {self.RATE_BASIS_OPTIONS}.")
-
         self.rate_basis = rate_basis
 
         self.daily_rate = self._to_daily_rate()
@@ -151,26 +148,22 @@ class CompoundInterest:
             raise ValueError("years must be greater than zero.")
         if years > 200:
             raise ValueError("years must not exceed 200.")
-
         self.years = float(years)
 
-        # when date is a string
         if isinstance(start_date, str):
             try:
                 # parse as ISO date format (e.g.: '2020-02-20'; '2020-02-20T15:30:00')
                 self.start_date = datetime.fromisoformat(start_date)
             except ValueError:
                 try:
-                    # parse as european date format (e.g.: 20.01.2020)
+                    # parse as European date format (e.g.: 20.01.2020)
                     self.start_date = datetime.strptime(start_date, "%d.%m.%Y")
                 except ValueError as e:
                     raise ValueError(
                         "start_date string is not in a valid ISO or European date format."
                     ) from e
-        # when date is a datetime object
         elif isinstance(start_date, datetime):
             self.start_date = start_date
-
         else:
             raise TypeError(
                 "start_date must be either a string or a datetime instance."
@@ -179,9 +172,7 @@ class CompoundInterest:
         if comp_freq is None:
             default_freq = self.RATE_PERIOD_MAP.get(rate_basis)
             if isinstance(default_freq, str):
-
                 comp_freq = default_freq
-
             else:
                 raise ValueError(
                     "Cannot determine compounding frequency from rate_basis."
@@ -191,30 +182,48 @@ class CompoundInterest:
                 raise TypeError("comp_freq must be a string.")
             if comp_freq not in self.FREQ_OPTIONS:
                 raise ValueError(f"comp_freq must be one of {self.FREQ_OPTIONS}.")
-
         self.comp_freq = comp_freq
 
         if not isinstance(contribution, (int, float)):
             raise TypeError("contribution must be a number (int or float).")
-
+        if contribution < 0:
+            raise ValueError("contribution must be non-negative.")
         self.contribution = float(contribution)
 
         if contribution_freq is not None:
+            if self.contribution <= 0:
+                raise ValueError(
+                    "A contribution frequency is provided, but the contribution is not greater than zero."
+                )
             if not isinstance(contribution_freq, str):
                 raise TypeError("contribution_freq must be a string.")
             if contribution_freq not in self.FREQ_OPTIONS:
                 raise ValueError(
-                    f"contribution_freq must be one of {self.FREQ_OPTIONS} if provided."
+                    f"contribution_freq must be one of {self.FREQ_OPTIONS}."
                 )
-
+        else:
+            if self.contribution > 0:
+                raise ValueError(
+                    "A contribution frequency must be provided when contribution is greater than zero."
+                )
         self.contribution_freq = contribution_freq
 
-        if not isinstance(contribution_timing, str):
-            raise TypeError("contribution_timing must be a string.")
-        if contribution_timing not in self.TIMING_OPTIONS:
+        if self.contribution <= 0 and contribution_timing is not None:
             raise ValueError(
-                f"contribution_timing must be one of {self.TIMING_OPTIONS}."
+                "Contribution timing should not be provided when there is no contribution or contribution frequency."
             )
+
+        if self.contribution > 0:
+            # If no timing is provided and a contribution frequency exists, default to "end"
+            if contribution_timing is None:
+                contribution_timing = "end"
+            else:
+                if not isinstance(contribution_timing, str):
+                    raise TypeError("contribution_timing must be a string.")
+                if contribution_timing not in self.TIMING_OPTIONS:
+                    raise ValueError(
+                        f"contribution_timing must be one of {self.TIMING_OPTIONS}."
+                    )
 
         self.contribution_timing = contribution_timing
 
@@ -222,7 +231,6 @@ class CompoundInterest:
             raise TypeError("tax_rate must be a number (int or float).")
         if not (0 <= tax_rate <= 1):
             raise ValueError("tax_rate must be between 0 and 1 (inclusive).")
-
         self.tax_rate = float(tax_rate)
 
     def _to_daily_rate(self) -> float:
