@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pycic"
 version = "0.1.0"
-description = "A flexible compound interest calculator with support for tax, inflation, and export."
+description = "A flexible compound interest calculator."
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Office/Business :: Financial",
 ]
 
