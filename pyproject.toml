@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pycic"
+name = "pyciclib"
 version = "0.1.0"
 description = "A flexible compound interest calculator."
 readme = "README.md"
@@ -32,10 +32,10 @@ dependencies = [
 dev = ["pytest"]
 
 [project.urls]
-Homepage = "https://github.com/Fab2102/pycic"
-Documentation = "https://github.com/Fab2102/pycic#readme"
-Source = "https://github.com/Fab2102/pycic"
-Tracker = "https://github.com/Fab2102/pycic/issues"
+Homepage = "https://github.com/Fab2102/pyciclib"
+Documentation = "https://github.com/Fab2102/pyciclib#readme"
+Source = "https://github.com/Fab2102/pyciclib"
+Tracker = "https://github.com/Fab2102/pyciclib/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

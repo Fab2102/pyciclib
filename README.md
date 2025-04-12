@@ -1,8 +1,8 @@
-<h1 align="left">PyCIC – Python Compound Interest Calculator</h1>
+<h1 align="left">PyCIClib – Python Compound Interest Calculator</h1>
 
 ###
 
-PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable interest rates and compounding frequencies, periodic contributions with flexible frequencies, 2 different contribution timings and tax adjustments. Additionally, the `timeline()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
+PyCIClib is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable interest rates and compounding frequencies, periodic contributions with flexible frequencies, 2 different contribution timings and tax adjustments. Additionally, the `timeline()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
 
 ### **Calculation Details**
 
@@ -15,7 +15,7 @@ For compounding purposes, the nominal `interest_rate` is converted to an equival
 ###
 
 ```bash
-pip install pycic
+pip install pyciclib
 ```
 
 ###
@@ -25,7 +25,7 @@ pip install pycic
 ###
 
 ```python
-import pycic as pc
+import pyciclib as pc
 
 # creating an instance
 calc = pc.CompoundInterest(
