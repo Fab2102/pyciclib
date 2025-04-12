@@ -2,7 +2,7 @@
 
 ###
 
-<p align="left">PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable compounding frequencies, periodic contributions with flexible frequencies and timings, tax adjustments and inflation considerations. Additionally, the `breakdown()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
+<p align="left">PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable interest rates and compounding frequencies, periodic contributions with flexible frequencies, 2 different contribution timings and tax adjustments. Additionally, the `timeline()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
 </p>
 
 ###
@@ -26,28 +26,30 @@ import pycic as pc
 
 # creating an instance
 calc = pc.CompoundInterest(
-init_value=10000,
-interest_rate=0.05,
-years=5,
-comp_freq="annually",
-contribution=100,
-contribution_freq="annually",
-contribution_timing="end",
-tax_rate=0.25,
+    init_value=10_000,
+    interest_rate=0.05,
+    rate_basis="p.a.",
+    years=2,
+    start_date="21.02.2025",
+    comp_freq="annually",
+    contribution=100,
+    contribution_freq="monthly",
+    contribution_timing="start",
+    tax_rate=0.25,
 )
 
 # overview of all methods
-calc.summary()
-print(calc.future_value(inflation=0.02))
-print(calc.breakdown())
+print(calc.timeline())
+print(calc.final_value())
+print(calc.summary())
 print(calc.total_contributions())
-print(calc.total_gross_interest_earned())
-print(calc.total_net_interest_earned())
+print(calc.total_gross_interest())
 print(calc.total_tax_paid())
+print(calc.total_net_interest())
 
 # you can also write the detailed investment table to csv or excel with pandas
-calc.breakdown().to_csv("investment_details.csv", index=False)
-calc.breakdown().to_excel("investment_details.xlsx", index=False, engine="openpyxl")
+calc.timeline().to_csv("investment_details.csv", index=False)
+calc.timeline().to_excel("investment_details.xlsx", index=False, engine="openpyxl")
 ```
 
 ###
@@ -62,19 +64,23 @@ calc.breakdown().to_excel("investment_details.xlsx", index=False, engine="openpy
 
 - `init_value`: Initial investment
 
-- `interest_rate`: interest rate in p.a., as a decimal (e.g., 0.05 for 5%)
+- `interest_rate`: Nominal interest rate as decimal (e.g. 0.05 for 5%)
+
+- `rate_basis`: Interest rate basis (`"p.a."`, `"p.m."`, ...)
 
 - `years`: Duration in years
-
-- `comp_freq`: Compounding frequency (`"annually"`, `"semiannually"`, etc.)
 
 <br>
 
 <h3 align="left">Optional Parameters:</h2>
 
+- `start_date`: Starting date of the investment (datetime object, YYYY-MM-DD or DD.MM.YYYY)
+
+- `comp_freq`: Compounding frequency (`"annually"`, `"semiannually"`, ...)
+
 - `contribution`: Amount added each interval
 
-- `contribution_freq`: Frequency of contributions (`"annually"`, `"semiannually"`, etc.)
+- `contribution_freq`: Frequency of contributions (`"annually"`, `"semiannually"`, ...)
 
 - `contribution_timing`: Payment at start/end of period. (`"start"`, `"end"`)
 
@@ -84,28 +90,39 @@ calc.breakdown().to_excel("investment_details.xlsx", index=False, engine="openpy
 
 <h2 align="left">Available Methods</h2>
 
-- `future_value(inflation=0.02)`: Calculates the final future value (with optional inflation)
+- `timeline()`: Returns a detailed pandas dataframe of the investment (see table below)
 
-- `breakdown()`: Returns a pandas dataframe with all periods listed (see table below)
+- `future_value()`: Returns the future value of the investment
 
-- `summary()`: Prints a readable summary of the investment
+- `summary()`: Returns a dictonary of the inputs/outputs of the investment
 
-- `total_contributions()`: Total amount contributed
+- `total_contributions()`: Returns the total amount of contributions
 
-- `total_gross_interest_earned()`: Total interest before taxes
+- `total_gross_interest()`: Returns the total amount of gross interest earned
 
-- `total_net_interest_earned()`: Total interest after taxes
+- `total_tax_paid()`: Returns the total amount of tax paid
 
-- `total_tax_paid()`: Total tax paid on interest
+- `total_net_interest()`: Returns the total amount of net interest earned
 
 <br>
 
 ## Sample table output
 
-| label | period | starting_balance | contribution_at_end | gross_interest | net_interest | tax_paid | ending_balance |
-| ----- | ------ | ---------------- | ------------------- | -------------- | ------------ | -------- | -------------- |
-| Year  | 1      | 10000.00         | 100                 | 500.00         | 375.00       | 125.00   | 10475.00       |
-| Year  | 2      | 10475.00         | 100                 | 523.75         | 392.81       | 130.94   | 10967.81       |
-| Year  | 3      | 10967.81         | 100                 | 548.39         | 411.29       | 137.10   | 11479.11       |
-| Year  | 4      | 11479.11         | 100                 | 573.96         | 430.47       | 143.49   | 12009.57       |
-| Year  | 5      | 12009.57         | 100                 | 600.48         | 450.36       | 150.12   | 12559.93       |
+| date       | weekday | start_balance | contribution | gross_interest | tax    | net_interest | end_balance |
+| ---------- | ------- | ------------- | ------------ | -------------- | ------ | ------------ | ----------- |
+| 21.02.2025 | Fri     | 10000.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10100.00    |
+| 21.03.2025 | Fri     | 10100.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10200.00    |
+| 21.04.2025 | Mon     | 10200.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10300.00    |
+| 21.05.2025 | Wed     | 10300.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10400.00    |
+| 21.06.2025 | Sat     | 10400.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10500.00    |
+| 21.07.2025 | Mon     | 10500.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10600.00    |
+| 21.08.2025 | Thu     | 10600.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10700.00    |
+| 21.09.2025 | Sun     | 10700.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10800.00    |
+| 21.10.2025 | Tue     | 10800.00      | 100.0        | 0.00           | 0.00   | 0.00         | 10900.00    |
+| 21.11.2025 | Fri     | 10900.00      | 100.0        | 0.00           | 0.00   | 0.00         | 11000.00    |
+| 21.12.2025 | Sun     | 11000.00      | 100.0        | 0.00           | 0.00   | 0.00         | 11100.00    |
+| 21.01.2026 | Wed     | 11100.00      | 100.0        | 0.00           | 0.00   | 0.00         | 11200.00    |
+| 20.02.2026 | Fri     | 11200.00      | 0.0          | 558.43         | 139.61 | 418.82       | 11618.82    |
+| 21.02.2026 | Sat     | 11618.82      | 100.0        | 0.00           | 0.00   | 0.00         | 11718.82    |
+| 21.03.2026 | Sat     | 11718.82      | 100.0        | 0.00           | 0.00   | 0.00         | 11818.82    |
+| 21.04.2026 | Tue     | 11818.82      | 100.0        | 0.00           | 0.00   | 0.00         | 11918.82    |
