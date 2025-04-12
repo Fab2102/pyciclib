@@ -39,3 +39,13 @@ Tracker = "https://github.com/Fab2102/pycic/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
+exclude = [
+    "legacy",
+    "legacy.*",
+    ".venv",
+    ".venv.*",
+    "venv",
+    "venv.*",
+    "tryout",
+    "tryout.*"
+]
