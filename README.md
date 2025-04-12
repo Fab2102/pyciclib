@@ -74,7 +74,7 @@ calc.timeline().to_excel("investment_details.xlsx", index=False, engine="openpyx
 
 <h3 align="left">Optional Parameters:</h2>
 
-- `start_date`: Starting date of the investment (datetime object, YYYY-MM-DD or DD.MM.YYYY)
+- `start_date`: Starting date of the investment (datetime object, `"YYYY-MM-DD"` or `"DD.MM.YYYY"`)
 
 - `comp_freq`: Compounding frequency (`"annually"`, `"semiannually"`, ...)
 
