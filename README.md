@@ -4,9 +4,9 @@
 
 PyCIC is a small Python package offering a versatile compound interest calculator for realistic investment analysis and personal finance applications. It supports variable interest rates and compounding frequencies, periodic contributions with flexible frequencies, 2 different contribution timings and tax adjustments. Additionally, the `timeline()` method returns a detailed pandas DataFrame that lets you visualize your growth scenarios and export the results to CSV or Excel files.
 
-### Calculation Overview
+### **Calculation Details**
 
-For compounding purposes, the nominal `interest_rate` is converted to an equivalent daily rate (p.d.) for enhanced calculation accuracy. The system dynamically computes dates starting from the specified `start_date`; if no date is provided, today’s date is used by default. Interest is applied at the end of each period according to the selected frequency. Contributions are executed either at the beginning of the period if `contribution_timing` is set to `"start"`, or at the end if it is set to `"end"`. For both `comp_freq` and `contribution_freq`, you can choose from the following options: `"annually"`, `"semiannually"`, `"quarterly"`, `"monthly"`, `"biweekly"`, `"weekly"`, and `"daily"`. If no `comp_freq` is provided, it is automatically determined based on the given `rate_basis`.
+For compounding purposes, the nominal `interest_rate` is converted to an equivalent daily rate (p.d.) which is used internally for enhanced calculation accuracy. The system dynamically computes dates starting from the specified `start_date`; if no date is provided, today’s date `datetime.today()` is used by default. Interest is applied at the end of each period according to the selected frequency. Contributions are applied at the beginning of the period when `contribution_timing` is set to `"start"` and at the end when set to `"end"`. If no value is provided, but there is an input for `contribution` and `contribution_freq`, then the default value is `"end"`. For both `comp_freq` and `contribution_freq`, you can choose from the following options: `"annually"`, `"semiannually"`, `"quarterly"`, `"monthly"`, `"biweekly"`, `"weekly"`, and `"daily"`. If no `comp_freq` is provided, it is automatically determined based on the given `rate_basis`.
 
 ###
 
