@@ -43,8 +43,8 @@ calc = pc.CompoundInterest(
 
 # overview of all methods
 print(calc.timeline())
-print(calc.final_value())
-print(calc.summary())
+print(calc.summary()) # you can also format this nicely with the json package
+print(calc.future_value())
 print(calc.total_contributions())
 print(calc.total_gross_interest())
 print(calc.total_tax_paid())
