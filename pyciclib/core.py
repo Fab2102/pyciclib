@@ -11,7 +11,7 @@ class CompoundInterest:
 
     This class handles the computation of compound interest over a specified number
     of years, with options for different compounding frequencies and contribution timings.
-    It validates inputs, converts the nominal interest rate to a daily rate, and sets up
+    It validates inputs, converts the effective interest rate to a daily rate, and sets up
     frequency mappings for both compounding and contributions.
     """
 
@@ -110,7 +110,7 @@ class CompoundInterest:
 
         Args:
             init_value (float, required): Initial investment amount.
-            interest_rate (float, required): Nominal interest rate.
+            interest_rate (float, required): Effective interest rate.
             rate_basis (str, required): Rate basis; allowed values: "p.a.", "p.s.", "p.q.", "p.m.", "p.biw.", "p.w.", "p.d.".
             years (float, required): Investment duration in years.
             start_date (Union[str, datetime], optional): Start date (ISO/European date string or datetime object). Defaults to today's date.
@@ -132,7 +132,7 @@ class CompoundInterest:
             raise TypeError("interest_rate must be a number (int or float).")
         if not (0 <= interest_rate <= 1):
             raise ValueError("interest_rate must be between 0 and 1 (inclusive).")
-        self.nominal_interest_rate = float(interest_rate)
+        self.effective_interest_rate = float(interest_rate)
 
         if not isinstance(rate_basis, str):
             raise TypeError("rate_basis must be a string.")
@@ -150,13 +150,15 @@ class CompoundInterest:
             raise ValueError("years must not exceed 200.")
         self.years = float(years)
 
-        if isinstance(start_date, str):
+        if start_date is None:
+            self.start_date = datetime.today()
+        elif isinstance(start_date, str):
             try:
-                # parse as ISO date format (e.g.: '2020-02-20'; '2020-02-20T15:30:00')
+                # parse as ISO date format
                 self.start_date = datetime.fromisoformat(start_date)
             except ValueError:
                 try:
-                    # parse as European date format (e.g.: 20.01.2020)
+                    # parse as European date format
                     self.start_date = datetime.strptime(start_date, "%d.%m.%Y")
                 except ValueError as e:
                     raise ValueError(
@@ -166,7 +168,7 @@ class CompoundInterest:
             self.start_date = start_date
         else:
             raise TypeError(
-                "start_date must be either a string or a datetime instance."
+                "start_date must be None, or a string or datetime instance."
             )
 
         if comp_freq is None:
@@ -235,7 +237,7 @@ class CompoundInterest:
 
     def _to_daily_rate(self) -> float:
         """
-        Convert the nominal interest rate to an equivalent daily rate.
+        Convert the effective interest rate to an equivalent daily rate.
         """
         try:
             period_key = self.RATE_PERIOD_MAP[self.rate_basis]
@@ -243,7 +245,7 @@ class CompoundInterest:
         except KeyError as e:
             raise ValueError(f"Unsupported rate_basis: {self.rate_basis}") from e
 
-        return (1 + self.nominal_interest_rate) ** (n / 365) - 1
+        return (1 + self.effective_interest_rate) ** (n / 365) - 1
 
     def _generate_compounding_dates(
         self, start_ts: pd.Timestamp, end_ts: pd.Timestamp, freq: str
@@ -459,7 +461,7 @@ class CompoundInterest:
         """
         input_params = {
             "Initial Value": self.init_value,
-            "Interest Rate": self.nominal_interest_rate,
+            "Interest Rate": self.effective_interest_rate,
             "Rate Basis": self.rate_basis,
             "Equivalent Daily Interest Rate": self.daily_rate,
             "Years": self.years,
@@ -476,7 +478,7 @@ class CompoundInterest:
         }
         output_params = {
             "Total Contributions": self.total_contributions(),
-            "Totoal Gross Interest": self.total_gross_interest(),
+            "Total Gross Interest": self.total_gross_interest(),
             "Total Tax Paid": self.total_tax_paid(),
             "Total Net Interest": self.total_net_interest(),
             "Final Value": self.future_value(),
@@ -498,7 +500,7 @@ class CompoundInterest:
             return NotImplemented
         return (
             self.init_value == other.init_value
-            and self.nominal_interest_rate == other.nominal_interest_rate
+            and self.effective_interest_rate == other.effective_interest_rate
             and self.rate_basis == other.rate_basis
             and self.years == other.years
             and self.start_date == other.start_date
@@ -515,7 +517,7 @@ class CompoundInterest:
         """
         return (
             f"CompoundInterest(init_value={self.init_value}, "
-            f"interest_rate={self.nominal_interest_rate}, "
+            f"interest_rate={self.effective_interest_rate}, "
             f"years={self.years}, "
             f"start_date={self.start_date.strftime("%d.%m.%Y")}, "
             f"comp_freq='{self.comp_freq}', "
@@ -531,7 +533,7 @@ class CompoundInterest:
         """
         return (
             f"CompoundInterest(init_value={self.init_value!r}, "
-            f"interest_rate={self.nominal_interest_rate!r}, "
+            f"interest_rate={self.effective_interest_rate!r}, "
             f"rate_basis={self.rate_basis!r}, "
             f"years={self.years!r}, "
             f"start_date={self.start_date!r}, "
