@@ -6,7 +6,7 @@ PyCIClib is a small Python package offering a versatile compound interest calcul
 
 ### **Calculation Details**
 
-For compounding purposes, the nominal `interest_rate` is converted to an equivalent daily rate (p.d.) which is used internally for enhanced calculation accuracy. The system dynamically computes dates starting from the specified `start_date`; if no date is provided, today’s date `datetime.today()` is used by default. Interest is applied at the end of each period according to the selected frequency. Contributions are applied at the beginning of the period when `contribution_timing` is set to `"start"` and at the end when set to `"end"`. If no value is provided, but there is an input for `contribution` and `contribution_freq`, then the default value is `"end"`. For both `comp_freq` and `contribution_freq`, you can choose from the following options: `"annually"`, `"semiannually"`, `"quarterly"`, `"monthly"`, `"biweekly"`, `"weekly"`, and `"daily"`. If no `comp_freq` is provided, it is automatically determined based on the given `rate_basis`.
+For compounding purposes, the effective `interest_rate` is converted to an equivalent daily rate (p.d.) which is used internally for enhanced calculation accuracy. The system dynamically computes dates starting from the specified `start_date`; if no date is provided, today’s date `datetime.today()` is used by default. Interest is applied at the end of each period according to the selected frequency. Contributions are applied at the beginning of the period when `contribution_timing` is set to `"start"` and at the end when set to `"end"`. If no value is provided, but there is an input for `contribution` and `contribution_freq`, then the default value is `"end"`. For both `comp_freq` and `contribution_freq`, you can choose from the following options: `"annually"`, `"semiannually"`, `"quarterly"`, `"monthly"`, `"biweekly"`, `"weekly"`, and `"daily"`. If no `comp_freq` is provided, it is automatically determined based on the given `rate_basis`.
 
 ###
 
@@ -67,7 +67,7 @@ calc.timeline().to_excel("investment_details.xlsx", index=False, engine="openpyx
 
 - `init_value`: Initial investment
 
-- `interest_rate`: Nominal interest rate as decimal (e.g. 0.05 for 5%)
+- `interest_rate`: Effective interest rate as decimal (e.g. 0.05 for 5%)
 
 - `rate_basis`: Interest rate basis (`"p.a."`, `"p.m."`, ...)
 
